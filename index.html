@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store Names in Firebase</title>
+  <!-- Include Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+</head>
+<body>
+  <h1>Store Names in Firebase</h1>
+  
+  <input type="text" id="nameInput" placeholder="Enter a name">
+  <button onclick="addName()">Add Name</button>
+  
+  <script>
+    // Your Firebase web app configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyBDVAANoalIc881f47H6XDaVVXnMMvW24w",
+authDomain: "store-20747.firebaseapp.com",
+databaseURL: "https://store-20747-default-rtdb.firebaseio.com",
+projectId: "store-20747",
+storageBucket: "store-20747.appspot.com",
+messagingSenderId: "577093194329",
+appId: "1:577093194329:web:57eb40748d1aefe0151748",
+measurementId: "G-4D9H3VCFJ6"
+    };
+  
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  
+    // Get a reference to the names collection in the Firebase database
+    var namesRef = firebase.database().ref('is_verified');
+  
+    function addName() {
+      var nameInput = document.getElementById('nameInput');
+      var name = nameInput.value;
+      
+      // Get the current count of names in the database
+      namesRef.once('value', function(snapshot) {
+        var count = snapshot.numChildren();
+        
+        // Create an object with the name and count as the key
+        var newName = {};
+        newName[count] = name;
+        
+        // Update the names collection with the new name
+        namesRef.update(newName)
+          .then(function() {
+            console.log('Name added successfully!');
+            nameInput.value = ''; // Clear the input field
+          })
+          .catch(function(error) {
+            console.error('Error adding name: ', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
