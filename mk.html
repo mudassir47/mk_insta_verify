@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store Names in Firebase</title>
+  <!-- Include Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #nameInput {
+      width: 200px;
+      margin-bottom: 10px;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #nameList {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #nameList li {
+      position: relative; /* Added for the shine effect */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      list-style: none;
+      animation: fadeIn 1s ease; /* Added animation when scrolling */
+    }
+
+    .name-text {
+      flex-grow: 1;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .delete-button,
+    .rename-button {
+      background-color: #f44336;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover,
+    .rename-button:hover {
+      background-color: #d32f2f;
+    }
+
+    .rename-input {
+      width: 150px;
+      margin-left: 10px;
+      padding: 5px;
+      border: none;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* New professional website styles */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .header img {
+      width: 100px;
+      height: 100px;
+      margin-right: 10px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .input-container input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .input-container button {
+      background-color: #64b5f6;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .input-container button:hover {
+      background-color: #81c784;
+    }
+
+    .name-list {
+      padding: 0;
+      margin: 0;
+    }
+
+    .name-list li:before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 40px;
+      height: 40px;
+      background-image: url('https://example.com/path/to/image.jpg');
+      background-size: cover;
+      border-radius: 50%;
+    }
+
+    .delete-button {
+      background-color: #e57373;
+    }
+
+    .rename-button {
+      background-color: #ffb74d;
+    }
+
+    .rename-input {
+      background-color: #f2f2f2;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .shine-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background-size: 200% 100%;
+      animation: shine 2s linear infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="https://example.com/path/to/logo.png" alt="Logo">
+    <h1>Verification Mk Inta Beta Server</h1>
+  </div>
+
+  <div class="input-container">
+    <input type="text" id="nameInput" placeholder="Enter a name">
+    <button onclick="addName()">Verify Username</button>
+  </div>
+
+  <div class="input-container">
+    <input type="text" id="searchInput" placeholder="Search name">
+    <button onclick="searchName()">Search</button>
+  </div>
+
+  <ul class="name-list" id="nameList"></ul>
+
+  <!-- Notification container -->
+  <div class="notification" id="notification"></div>
+
+  <script>
+    var firebaseConfig = {
+      // Your Firebase configuration
+      apiKey: "AIzaSyDXs9z-zmJ2mDQ-6TIxtY2RXZsxni67Rgs",
+      authDomain: "mk-club-472.firebaseapp.com",
+      databaseURL: "https://mk-club-472-default-rtdb.firebaseio.com",
+      projectId: "mk-club-472",
+      storageBucket: "mk-club-472.appspot.com",
+      messagingSenderId: "799668916481",
+      appId: "1:799668916481:web:d1eeb17646aa77d3d88b00",
+      measurementId: "G-YT8EV7SQ41"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    var namesRef = firebase.database().ref('is_verified');
+    var isLoggedIn = true;
+
+    function addName() {
+      if (!isLoggedIn) {
+        console.log('Please login first!');
+        return;
+      }
+
+      var nameInput = document.getElementById('nameInput');
+      var name = nameInput.value.toLowerCase();
+
+      namesRef.orderByValue().equalTo(name).once('value', function(snapshot) {
+        if (snapshot.exists()) {
+          console.log('Name already exists in the database!');
+          showNotification('Name already exists in the database!', 'error');
+        } else {
+          namesRef.once('value', function(snapshot) {
+            var names = snapshot.val() || {};
+            var namesArray = Object.values(names);
+
+            if (namesArray.includes(name)) {
+              console.log('Name already exists in the database!');
+              showNotification('Name already exists in the database!', 'error');
+            } else {
+              var count = Object.keys(names).length;
+
+              var newName = {};
+              newName[count] = name;
+
+              namesRef.update(newName)
+                .then(function() {
+                  console.log('Name added successfully!');
+                  showNotification('Name added successfully!', 'success');
+                  nameInput.value = '';
+                  updateNameList();
+                })
+                .catch(function(error) {
+                  console.error('Error adding name: ', error);
+                  showNotification('Error adding name. Please try again!', 'error');
+                });
+            }
+          });
+        }
+      });
+    }
+
+    function deleteName(key) {
+      if (!isLoggedIn) {
+        console.log('Please login first!');
+        return;
+      }
+
+      var deletePromise = namesRef.child(key).remove();
+
+      deletePromise.then(function() {
+        reorderNames();
+        console.log('Name deleted successfully!');
+        showNotification('Name deleted successfully!', 'success');
+        updateNameList();
+      }).catch(function(error) {
+        console.error('Error deleting name: ', error);
+        showNotification('Error deleting name. Please try again!', 'error');
+      });
+    }
+
+    function renameName(key, newName) {
+      if (!isLoggedIn) {
+        console.log('Please login first!');
+        return;
+      }
+
+      namesRef.child(key).set(newName.toLowerCase())
+        .then(function() {
+          console.log('Name renamed successfully!');
+          showNotification('Name renamed successfully!', 'success');
+          updateNameList();
+        })
+        .catch(function(error) {
+          console.error('Error renaming name: ', error);
+          showNotification('Error renaming name. Please try again!', 'error');
+        });
+    }
+
+    function reorderNames() {
+      namesRef.once('value', function(snapshot) {
+        var names = [];
+        snapshot.forEach(function(childSnapshot) {
+          names.push(childSnapshot.val());
+        });
+
+        names.sort();
+
+        var updates = {};
+        names.forEach(function(name, index) {
+          updates[index] = name;
+        });
+
+        namesRef.set(updates)
+          .then(function() {
+            console.log('Names reordered successfully!');
+          })
+          .catch(function(error) {
+            console.error('Error reordering names: ', error);
+          });
+      });
+    }
+
+    function updateNameList() {
+      namesRef.once('value', function(snapshot) {
+        if (!isLoggedIn) {
+          return;
+        }
+
+        var nameList = document.getElementById('nameList');
+        nameList.innerHTML = '';
+
+        var names = snapshot.val() || {};
+
+        var sortedNames = Object.entries(names)
+          .sort(([keyA], [keyB]) => keyA - keyB)
+          .map(([_, value]) => value);
+
+        sortedNames.forEach(function(name, index) {
+          var listItem = document.createElement('li');
+          var shineEffect = document.createElement('div'); // Shine effect element
+
+          var nameText = document.createElement('span');
+          nameText.textContent = name;
+          nameText.className = 'name-text';
+          listItem.appendChild(nameText);
+
+          var deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Delete';
+          deleteButton.className = 'delete-button';
+          deleteButton.addEventListener('click', function() {
+            deleteName(index);
+          });
+          listItem.appendChild(deleteButton);
+
+          var renameInput = document.createElement('input');
+          renameInput.type = 'text';
+          renameInput.placeholder = 'New name';
+          renameInput.className = 'rename-input';
+          listItem.appendChild(renameInput);
+
+          var renameButton = document.createElement('button');
+          renameButton.textContent = 'Rename';
+          renameButton.className = 'rename-button';
+          renameButton.addEventListener('click', function() {
+            var newName = renameInput.value;
+            renameName(index, newName);
+          });
+          listItem.appendChild(renameButton);
+
+          listItem.appendChild(shineEffect); // Append shine effect to the list item
+          listItem.className = 'fade-in'; // Add fade-in animation class
+
+          nameList.prepend(listItem); // Add the new name at the top of the list
+        });
+      });
+    }
+
+    function searchName() {
+      var searchInput = document.getElementById('searchInput');
+      var searchTerm = searchInput.value.toLowerCase();
+      var nameItems = document.querySelectorAll('.name-list li');
+
+      nameItems.forEach(function(item) {
+        var nameText = item.querySelector('.name-text');
+        var name = nameText.textContent.toLowerCase();
+
+        if (name.includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function showNotification(message, type) {
+      var notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#F44336';
+      notification.style.display = 'block';
+
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    updateNameList(); // Initial call to populate the list
+  </script>
+</body>
+</html>
