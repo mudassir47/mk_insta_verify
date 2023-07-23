@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Store Names in Firebase</title>
+  <!-- Include Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f2f2f2;
+    }
+
+
+    //
+
+    .button-64 {
+  align-items: center;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-family: Phantomsans, sans-serif;
+  font-size: 20px;
+  justify-content: center;
+  line-height: 1em;
+  max-width: 100%;
+  min-width: 140px;
+  padding: 3px;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.button-64:active,
+.button-64:hover {
+  outline: 0;
+}
+
+.button-64 span {
+  background-color: rgb(5, 6, 45);
+  padding: 16px 24px;
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  transition: 300ms;
+}
+
+.button-64:hover span {
+  background: none;
+}
+
+@media (min-width: 768px) {
+  .button-64 {
+    font-size: 24px;
+    min-width: 196px;
+  }
+}
+    //
+
+
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #nameInput {
+      width: 50px;
+      margin-bottom: 10px;
+      padding: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #nameList {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #nameList li {
+      position: relative; /* Added for the shine effect */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 15px;
+      list-style: none;
+      animation: fadeIn 1s ease; /* Added animation when scrolling */
+    }
+
+    .name-text {
+      flex-grow: 1;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .delete-button,
+    .rename-button {
+      background-color: #f44336;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover,
+    .rename-button:hover {
+      background-color: #d32f2f;
+    }
+
+    .rename-input {
+      width: 150px;
+      margin-left: 10px;
+      padding: 5px;
+      border: none;
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* New professional website styles */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .header img {
+      width: 100px;
+      height: 100px;
+      margin-right: 10px;
+      border-radius: 10px;
+      border: 5px solid rgb(179, 165, 201);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      width: 300px;
+    }
+
+    .input-container input {
+      flex-grow: 1;
+      margin-right: 10px;
+    }
+
+    .input-container button {
+      background-color: #64b5f6;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .input-container button:hover {
+      background-color: #81c784;
+    }
+
+    .name-list {
+      padding: 0;
+      margin: 0;
+    }
+
+    .name-list li:before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 40px;
+      height: 40px;
+      background-image: url('https://example.com/path/to/image.jpg');
+      background-size: cover;
+      border-radius: 50%;
+    }
+
+    .delete-button {
+      background-color: #e57373;
+    }
+
+    .rename-button {
+      background-color: #ffb74d;
+    }
+
+    .rename-input {
+      background-color: #f2f2f2;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .shine-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      background-size: 200% 100%;
+      animation: shine 2s linear infinite;
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease;
+    }
+    .button-82-pushable {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  transition: filter 250ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-82-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: hsl(0deg 0% 0% / 0.25);
+  will-change: transform;
+  transform: translateY(2px);
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
+}
+
+.button-82-edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to left,
+    hsl(340deg 100% 16%) 0%,
+    hsl(340deg 100% 32%) 8%,
+    hsl(340deg 100% 32%) 92%,
+    hsl(340deg 100% 16%) 100%
+  );
+}
+
+.button-82-front {
+  display: block;
+  position: relative;
+  padding: 12px 27px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  color: white;
+  background: hsl(345deg 100% 47%);
+  will-change: transform;
+  transform: translateY(-4px);
+  transition:
+    transform
+    600ms
+    cubic-bezier(.3, .7, .4, 1);
+}
+
+@media (min-width: 768px) {
+  .button-82-front {
+    font-size: 1.25rem;
+    padding: 12px 42px;
+  }
+}
+
+.button-82-pushable:hover {
+  filter: brightness(110%);
+  -webkit-filter: brightness(110%);
+}
+
+.button-82-pushable:hover .button-82-front {
+  transform: translateY(-6px);
+  transition:
+    transform
+    250ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.button-82-pushable:active .button-82-front {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+
+.button-82-pushable:hover .button-82-shadow {
+  transform: translateY(4px);
+  transition:
+    transform
+    250ms
+    cubic-bezier(.3, .7, .4, 1.5);
+}
+
+.button-82-pushable:active .button-82-shadow {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+
+.button-82-pushable:focus:not(:focus-visible) {
+  outline: none;
+}
+
+  </style>
+</head>
+
+<body>
+
+
+  <button class="button-82-pushable" role="button">
+    <span class="button-82-shadow"></span>
+    <span class="button-82-edge"></span>
+    <span class="button-82-front text">
+      <a style="color: #f2f2f2; text-decoration: none;"href="https://mkmods472.blogspot.com/2023/03/mk-instapro-2023.html">Downlod Instapro</a>
+    </span>
+  </button>
+  
+  <button style="float: right;" class="button-82-pushable" role="button">
+    <span class="button-82-shadow"></span>
+    <span class="button-82-edge"></span>
+    <span class="button-82-front text">
+      <a style="color: #f2f2f2; text-decoration: none;"href="https://www.instagram.com/snamexx/">Follow here</a>
+    </span>
+  </button>
+
+  <div class="header">
+    <img   src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcdfiZcmgLHhp77Tp7Ny0rYpR2baGoDZXkK1Ufpb3e9QOiud54EaMhM4ZAWbfu2oT-Dg1nE8T6xIL9p0WYXvEUxC6-fvMO6W22DEyxxLsT7DdIOHtFImVg2D7Ii9dD1cw48tzWjH0SvhjRwbkmU3mXdpZubW3azWNvKpwnmC8fBFTLeFKVZ9IZr-NL0B_-/w680/photo-1634942537034-2531766767d1.jpg" alt="Logo">
+    <h1>Verification Mk Inta Beta Server  ,</h1>
+    <img  style="border-radius: 50%; padding: 2px;"  src="https://mudassir47.github.io/mk-card/images/profile-pic.png"  alt="Logo" >
+ 
+  </div>
+  
+  <div class="input-container">
+    <input type="text" id="nameInput" placeholder="Enter a name">
+    <button onclick="addName()">Verify Username</button>
+  </div>
+  <div class="input-container">
+    <input type="text" id="searchInput" placeholder="Search name">
+    <button onclick="searchName()">Search</button>
+  </div>
+  <ul class="name-list" id="nameList"></ul>
+  <div class="notification" id="notification"></div>
+  <script>
+    var firebaseConfig = {
+      // Your Firebase configuration
+      apiKey: "AIzaSyDXs9z-zmJ2mDQ-6TIxtY2RXZsxni67Rgs",
+      authDomain: "mk-club-472.firebaseapp.com",
+      databaseURL: "https://mk-club-472-default-rtdb.firebaseio.com",
+      projectId: "mk-club-472",
+      storageBucket: "mk-club-472.appspot.com",
+      messagingSenderId: "799668916481",
+      appId: "1:799668916481:web:d1eeb17646aa77d3d88b00",
+      measurementId: "G-YT8EV7SQ41"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    var namesRef = firebase.database().ref('is_verified');
+
+    function addName() {
+      var nameInput = document.getElementById('nameInput');
+      var name = nameInput.value.toLowerCase();
+
+      namesRef.orderByValue().equalTo(name).once('value', function(snapshot) {
+        if (snapshot.exists()) {
+          console.log('Name already exists in the database!');
+          showNotification('Name already exists in the database!', 'error');
+        } else {
+          namesRef.once('value', function(snapshot) {
+            var names = snapshot.val() || {};
+            var namesArray = Object.values(names);
+
+            if (namesArray.includes(name)) {
+              console.log('Name already exists in the database!');
+              showNotification('Name already exists in the database!', 'error');
+            } else {
+              var count = Object.keys(names).length;
+              var newName = {};
+              newName[count] = name;
+
+              namesRef.update(newName)
+                .then(function() {
+                  console.log('Name added successfully!');
+                  showNotification('Name added successfully!', 'success');
+                  nameInput.value = '';
+                  updateNameList();
+                })
+                .catch(function(error) {
+                  console.error('Error adding name: ', error);
+                  showNotification('Error adding name. Please try again!', 'error');
+                });
+            }
+          });
+        }
+      });
+    }
+
+    function updateNameList() {
+    namesRef.once('value', function(snapshot) {
+      var nameList = document.getElementById('nameList');
+      nameList.innerHTML = '';
+
+      var names = snapshot.val() || {};
+
+      var sortedNames = Object.entries(names)
+        .sort(([keyA], [keyB]) => keyA - keyB)
+        .map(([_, value]) => value);
+
+      sortedNames.forEach(function(name, index) {
+        var listItem = document.createElement('li');
+        var shineEffect = document.createElement('div');
+
+        var nameText = document.createElement('span');
+        nameText.textContent = name;
+        nameText.className = 'name-text';
+        listItem.appendChild(nameText);
+
+        // Add a text to check if the username is valid on Instagram
+        var usernameStatus = document.createElement('span');
+        usernameStatus.className = 'username-status';
+        listItem.appendChild(usernameStatus);
+
+        listItem.appendChild(shineEffect);
+        listItem.className = 'fade-in';
+
+        // Check if the username is valid on Instagram
+        checkInstagramUsername(name, usernameStatus);
+
+        nameList.prepend(listItem);
+      });
+    });
+  }
+  function checkInstagramUsername(username, statusElement) {
+    // Replace 'YOUR_ACCESS_TOKEN' with your actual Instagram access token
+    var accessToken = 'IGQVJYZAXpMLUhkV1JsQVF6NV9nRFVhVUs3SGxEOUlBU0wxLUJNMkt4Q1EzcVpFOXhfUmhmN3VmVEtiaXAyOWpJUkRMQUQ3SEJIX3hiWHJGdGJ3RmRhOVUwSjRmOTIyRDVlQVBTZA1Y4dzE3RFBISWpSVgZDZD';
+    var instagramApiUrl = `https://api.instagram.com/v1/users/search?q=${username}&access_token=${accessToken}`;
+
+    fetch(instagramApiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.data && data.data.length > 0) {
+          var userFound = data.data.some((user) => user.username === username);
+          if (userFound) {
+            statusElement.textContent = ' (Username found on Instagram)';
+          } else {
+            statusElement.textContent = ' (Username not found on Instagram)';
+          }
+        } else {
+          statusElement.textContent = ' (Failed to check username on Instagram)';
+        }
+      })
+      .catch((error) => {
+        statusElement.textContent = ' (Failed to check username on Instagram)';
+        console.error('Error checking username on Instagram:', error);
+      });
+  }
+
+    function searchName() {
+      var searchInput = document.getElementById('searchInput');
+      var searchTerm = searchInput.value.toLowerCase();
+      var nameItems = document.querySelectorAll('.name-list li');
+
+      nameItems.forEach(function(item) {
+        var nameText = item.querySelector('.name-text');
+        var name = nameText.textContent.toLowerCase();
+
+        if (name.includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function showNotification(message, type) {
+      var notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#F44336';
+      notification.style.display = 'block';
+
+      setTimeout(function() {
+        notification.style.display = 'none';
+      }, 3000);
+    }
+
+    updateNameList();
+    document.getElementById('searchInput').addEventListener('input', searchName);
+  </script>
+</body>
+</html>   
