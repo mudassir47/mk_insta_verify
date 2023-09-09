@@ -5,7 +5,8 @@
   <!-- Include Firebase JavaScript SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-database.js"></script>
-  <style>
+<link rel="icon" type="image" href="img/343985488_1543318709524115_5138684854951413402_n.jpg">
+<style>
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
@@ -356,11 +357,96 @@
   outline: none;
 }
 
+
+
+
+
+
+.banner-slider-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px; /* Adjust the max width as needed */
+      margin: 0 auto;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 10px solid rgb(235, 170, 170);
+      
+    }
+
+    .banner-slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .banner-slide {
+      flex: 0 0 100%;
+      width: 100px;
+      height: 300px;
+    }
+
+    .banner-slide img {
+      width: 100%;
+      height: auto;
+    }
+
+    .gg{
+        height: 100;
+    }
+
+.f{
+  margin-left: 40px;
+
+  
+  
+  
+}
+.ta{
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+font-size: 10px;
+color: #d32f2f;
+}
+.*{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
   </style>
 </head>
 
 <body>
+ <div class="header">
+    <!-- Your header content -->
+    <h1 class="ta">Follow here for more updates and any help.</h1>
+  </div>
 
+  <!-- Banner Slider -->
+  <div class="banner-slider-container">
+    <div class="banner-slider">
+      <!-- Slide 1 -->
+
+      <div class="banner-slide">
+        
+        <a href="https://www.instagram.com/snamexx/" target="_blank">
+          <img class="gg" src="img/h.png" alt="Banner 1">
+          
+        </a>
+        
+      </div>
+      <!-- Slide 2 -->
+      <div class="banner-slide">
+        <a href="https://www.instagram.com/azamguruyt/" target="_blank">
+          <img src="img/re.png" alt="Banner 2">
+        </a>
+      </div>
+      <!-- Slide 3 -->
+      <div class="banner-slide">
+        <a href="https://www.instagram.com/mk_sh4d0w/" target="_blank">
+          <img src="img/jjj.png" alt="Banner 3">
+        </a>
+      </div>
+      <!-- Add more slides as needed -->
+    </div>
+  </div>
 
   <button class="button-82-pushable" role="button">
     <span class="button-82-shadow"></span>
@@ -377,13 +463,19 @@
       <a style="color: #f2f2f2; text-decoration: none;"href="https://www.instagram.com/snamexx/">Follow here</a>
     </span>
   </button>
-
+ 
   <div class="header">
+
     <img   src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcdfiZcmgLHhp77Tp7Ny0rYpR2baGoDZXkK1Ufpb3e9QOiud54EaMhM4ZAWbfu2oT-Dg1nE8T6xIL9p0WYXvEUxC6-fvMO6W22DEyxxLsT7DdIOHtFImVg2D7Ii9dD1cw48tzWjH0SvhjRwbkmU3mXdpZubW3azWNvKpwnmC8fBFTLeFKVZ9IZr-NL0B_-/w680/photo-1634942537034-2531766767d1.jpg" alt="Logo">
-    <h1>Verification Mk Inta Beta Server  ,</h1>
-    <img  style="border-radius: 50%; padding: 2px;"  src="https://mudassir47.github.io/mk-card/images/profile-pic.png"  alt="Logo" >
+   <div class="c">
+
+     <div class="f"> Total Users: <span id="userCount">Loading...</span></div>
+     <h1>Verification Mk Inta Beta Server  ,</h1>
+    </div>
+    <img  style="border-radius: 50%; padding: 2px;"   src="https://mudassir47.github.io/mk-card/images/profile-pic.png"  alt="Logo" >
  
   </div>
+  
   
   <div class="input-container">
     <input type="text" id="nameInput" placeholder="Enter a name">
@@ -451,64 +543,32 @@
     }
 
     function updateNameList() {
-    namesRef.once('value', function(snapshot) {
-      var nameList = document.getElementById('nameList');
-      nameList.innerHTML = '';
+      namesRef.once('value', function(snapshot) {
+        var nameList = document.getElementById('nameList');
+        nameList.innerHTML = '';
 
-      var names = snapshot.val() || {};
+        var names = snapshot.val() || {};
 
-      var sortedNames = Object.entries(names)
-        .sort(([keyA], [keyB]) => keyA - keyB)
-        .map(([_, value]) => value);
+        var sortedNames = Object.entries(names)
+          .sort(([keyA], [keyB]) => keyA - keyB)
+          .map(([_, value]) => value);
 
-      sortedNames.forEach(function(name, index) {
-        var listItem = document.createElement('li');
-        var shineEffect = document.createElement('div');
+        sortedNames.forEach(function(name, index) {
+          var listItem = document.createElement('li');
+          var shineEffect = document.createElement('div');
 
-        var nameText = document.createElement('span');
-        nameText.textContent = name;
-        nameText.className = 'name-text';
-        listItem.appendChild(nameText);
+          var nameText = document.createElement('span');
+          nameText.textContent = name;
+          nameText.className = 'name-text';
+          listItem.appendChild(nameText);
 
-        // Add a text to check if the username is valid on Instagram
-        var usernameStatus = document.createElement('span');
-        usernameStatus.className = 'username-status';
-        listItem.appendChild(usernameStatus);
+          listItem.appendChild(shineEffect);
+          listItem.className = 'fade-in';
 
-        listItem.appendChild(shineEffect);
-        listItem.className = 'fade-in';
-
-        // Check if the username is valid on Instagram
-        checkInstagramUsername(name, usernameStatus);
-
-        nameList.prepend(listItem);
+          nameList.prepend(listItem);
+        });
       });
-    });
-  }
-  function checkInstagramUsername(username, statusElement) {
-    // Replace 'YOUR_ACCESS_TOKEN' with your actual Instagram access token
-    var accessToken = 'IGQVJYZAXpMLUhkV1JsQVF6NV9nRFVhVUs3SGxEOUlBU0wxLUJNMkt4Q1EzcVpFOXhfUmhmN3VmVEtiaXAyOWpJUkRMQUQ3SEJIX3hiWHJGdGJ3RmRhOVUwSjRmOTIyRDVlQVBTZA1Y4dzE3RFBISWpSVgZDZD';
-    var instagramApiUrl = `https://api.instagram.com/v1/users/search?q=${username}&access_token=${accessToken}`;
-
-    fetch(instagramApiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.data && data.data.length > 0) {
-          var userFound = data.data.some((user) => user.username === username);
-          if (userFound) {
-            statusElement.textContent = ' (Username found on Instagram)';
-          } else {
-            statusElement.textContent = ' (Username not found on Instagram)';
-          }
-        } else {
-          statusElement.textContent = ' (Failed to check username on Instagram)';
-        }
-      })
-      .catch((error) => {
-        statusElement.textContent = ' (Failed to check username on Instagram)';
-        console.error('Error checking username on Instagram:', error);
-      });
-  }
+    }
 
     function searchName() {
       var searchInput = document.getElementById('searchInput');
@@ -540,6 +600,54 @@
 
     updateNameList();
     document.getElementById('searchInput').addEventListener('input', searchName);
+    const slider = document.querySelector('.banner-slider');
+    let slideIndex = 0;
+
+    function showSlide(index) {
+      slider.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    function autoSlide() {
+      slideIndex = (slideIndex + 1) % 3; // Adjust the number of slides accordingly
+      showSlide(slideIndex);
+    }
+
+    // Auto slide every 3 seconds (3000 milliseconds)
+    setInterval(autoSlide, 3000);
+
+    // Initial slide display
+    showSlide(slideIndex);
+  
+    function updateNameList() {
+  namesRef.once('value', function(snapshot) {
+    var nameList = document.getElementById('nameList');
+    nameList.innerHTML = '';
+
+    var names = snapshot.val() || {};
+    var sortedNames = Object.entries(names)
+      .sort(([keyA], [keyB]) => keyA - keyB)
+      .map(([_, value]) => value);
+
+    sortedNames.forEach(function(name, index) {
+      var listItem = document.createElement('li');
+      var shineEffect = document.createElement('div');
+
+      var nameText = document.createElement('span');
+      nameText.textContent = name;
+      nameText.className = 'name-text';
+      listItem.appendChild(nameText);
+
+      listItem.appendChild(shineEffect);
+      listItem.className = 'fade-in';
+
+      nameList.prepend(listItem);
+    });
+
+    // Update the total user count
+    var userCount = Object.keys(names).length;
+    document.getElementById('userCount').textContent = userCount;
+  });
+}
   </script>
 </body>
 </html>   
