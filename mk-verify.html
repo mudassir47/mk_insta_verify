@@ -449,45 +449,26 @@ color: #d32f2f;
     </div>
   </div>
 
-  <button class="button-82-pushable" role="button">
-    <span class="button-82-shadow"></span>
-    <span class="button-82-edge"></span>
-    <span class="button-82-front text">
-      <a style="color: #f2f2f2; text-decoration: none;"href="https://mkmods472.blogspot.com/2023/03/mk-instapro-2023.html">Downlod Instapro</a>
-    </span>
-  </button>
-  
-  <button style="float: right;" class="button-82-pushable" role="button">
-    <span class="button-82-shadow"></span>
-    <span class="button-82-edge"></span>
-    <span class="button-82-front text">
-      <a style="color: #f2f2f2; text-decoration: none;"href="https://www.instagram.com/snamexx/">Follow here</a>
-    </span>
-  </button>
- 
-  <div class="header">
-
-    <img   src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcdfiZcmgLHhp77Tp7Ny0rYpR2baGoDZXkK1Ufpb3e9QOiud54EaMhM4ZAWbfu2oT-Dg1nE8T6xIL9p0WYXvEUxC6-fvMO6W22DEyxxLsT7DdIOHtFImVg2D7Ii9dD1cw48tzWjH0SvhjRwbkmU3mXdpZubW3azWNvKpwnmC8fBFTLeFKVZ9IZr-NL0B_-/w680/photo-1634942537034-2531766767d1.jpg" alt="Logo">
-   <div class="c">
-
-     <div class="f"> Total Users: <span id="userCount">Loading...</span></div>
-     <h1>Verification Mk Inta Beta Server  ,</h1>
+  <div id="passwordSection">
+    <div class="input-container">
+      <input type="password" id="passwordInput" placeholder="Enter Password">
+      <button onclick="checkPassword()">Submit Password</button>
     </div>
-    <img  style="border-radius: 50%; padding: 2px;"   src="https://mudassir47.github.io/mk-card/images/profile-pic.png"  alt="Logo" >
- 
   </div>
-  
-  
-  <div class="input-container">
-    <input type="text" id="nameInput" placeholder="Enter a name">
-    <button onclick="addName()">Verify Username</button>
+
+  <div id="verifyUsernameSection" style="display: none;">
+    <div class="input-container">
+      <input type="text" id="nameInput" placeholder="Enter a name">
+      <button onclick="addName()">Verify Username</button>
+    </div>
+    <div class="input-container">
+      <input type="text" id="searchInput" placeholder="Search name">
+      <button onclick="searchName()">Search</button>
+    </div>
+    <ul class="name-list" id="nameList"></ul>
+    <div class="notification" id="notification"></div>
   </div>
-  <div class="input-container">
-    <input type="text" id="searchInput" placeholder="Search name">
-    <button onclick="searchName()">Search</button>
-  </div>
-  <ul class="name-list" id="nameList"></ul>
-  <div class="notification" id="notification"></div>
+
   <script>
     var firebaseConfig = {
       // Your Firebase configuration
@@ -504,6 +485,21 @@ color: #d32f2f;
     firebase.initializeApp(firebaseConfig);
 
     var namesRef = firebase.database().ref('is_verified');
+    var password = "mudassir"; // Set your desired password
+
+    function checkPassword() {
+      var passwordInput = document.getElementById('passwordInput');
+      var enteredPassword = passwordInput.value;
+
+      if (enteredPassword === password) {
+        // Correct password, show the username verification section
+        document.getElementById('passwordSection').style.display = 'none';
+        document.getElementById('verifyUsernameSection').style.display = 'block';
+      } else {
+        // Incorrect password, show an error message
+        showNotification('Incorrect Password. Please try again!', 'error');
+      }
+    }
 
     function addName() {
       var nameInput = document.getElementById('nameInput');
